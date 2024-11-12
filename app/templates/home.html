@@ -1,0 +1,22 @@
+<!-- app/templates/home.html -->
+
+{% extends "base.html" %}
+{% block title %}Home - ASVEnrollment{% endblock %}
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to ASVEnrollment!</h1>
+    {% if not current_user.is_authenticated %}
+        <p class="lead">Please log in to continue.</p>
+        <a href="{{ url_for('google.login') }}" class="btn btn-primary btn-lg">Login with Google</a>
+    {% else %}
+        <p class="lead">You are logged in as {{ current_user.email }}.</p>
+        <p>Use the navigation bar to access different sections.</p>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-info">Go to Dashboard</a>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+

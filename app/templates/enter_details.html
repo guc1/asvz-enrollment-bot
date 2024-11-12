@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Enter Details{% endblock %}
+{% block content %}
+<h1>Enter Your Details</h1>
+<form method="post">
+    <div class="form-group">
+        <label for="ASVZ_ID">ASVZ ID:</label>
+        <input type="text" name="ASVZ_ID" id="ASVZ_ID" class="form-control" value="{{ current_user.ASVZ_ID or '' }}">
+    </div>
+    <div class="form-group">
+        <label for="ASVZ_Password">ASVZ Password:</label>
+        <input type="password" name="ASVZ_Password" id="ASVZ_Password" class="form-control" value="{{ current_user.ASVZ_Password or '' }}">
+    </div>
+    <!-- Add the rest of the fields similarly, using Bootstrap classes -->
+    <div class="form-group">
+        <input type="submit" value="Submit" class="btn btn-primary">
+    </div>
+</form>
+{% endblock %}
+
+

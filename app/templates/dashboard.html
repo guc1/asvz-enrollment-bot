@@ -1,0 +1,91 @@
+<!-- templates/dashboard.html -->
+
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Your Enrollments</h1>
+
+<table class="table table-striped" id="enrollments-table">
+    <thead>
+        <tr>
+            <th>Class URL</th>
+            <th>Status</th>
+            <th>Result</th>
+            <th>Message</th>
+            <th>Created At</th>
+            <th>Started At</th>
+            <th>Completed At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for enrollment in enrollments %}
+        <tr data-enrollment-id="{{ enrollment.id }}">
+            <td><a href="{{ enrollment.base_url }}" target="_blank">{{ enrollment.base_url }}</a></td>
+            <td class="status">
+                {% if enrollment.status in ['PENDING', 'STARTED'] %}
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                {% endif %}
+                {{ enrollment.status }}
+            </td>
+            <td class="result">
+                {% if enrollment.result == True %}
+                    Success
+                {% elif enrollment.result == False %}
+                    Failure
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td class="message">{{ enrollment.message or '---' }}</td>
+            <td>{{ enrollment.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td class="started_at">
+                {% if enrollment.started_at %}
+                    {{ enrollment.started_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                {% else %}
+                    ---
+                {% endif %}
+            </td>
+            <td class="completed_at">
+                {% if enrollment.completed_at %}
+                    {{ enrollment.completed_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                {% else %}
+                    ---
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7">No enrollments found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('enroll.enroll') }}" class="btn btn-primary">Enroll in a New Class</a>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    function updateEnrollments() {
+        fetch('{{ url_for("main.get_enrollments") }}')
+            .then(response => response.json())
+            .then(data => {
+                data.enrollments.forEach(enrollment => {
+                    let row = document.querySelector(`tr[data-enrollment-id="${enrollment.id}"]`);
+                    if (row) {
+                        row.querySelector('.status').innerHTML = enrollment.status_html;
+                        row.querySelector('.result').innerText = enrollment.result_text;
+                        row.querySelector('.message').innerText = enrollment.message || '---';
+                        row.querySelector('.started_at').innerText = enrollment.started_at || '---';
+                        row.querySelector('.completed_at').innerText = enrollment.completed_at || '---';
+                    }
+                });
+            });
+    }
+
+    // Update enrollments every 10 seconds
+    setInterval(updateEnrollments, 10000);
+</script>
+{% endblock %}
